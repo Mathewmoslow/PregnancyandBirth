@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 const PregnancySignsQuiz = () => {
   const [quizState, setQuizState] = useState({
@@ -9,6 +9,7 @@ const PregnancySignsQuiz = () => {
     answers: [],
   });
 
+  const [activityMode, setActivityMode] = useState("selection"); // "selection", "quiz", or "dragdrop"
   const [draggedItem, setDraggedItem] = useState(null);
   const [categories, setCategories] = useState({
     presumptive: [],
@@ -110,6 +111,34 @@ const PregnancySignsQuiz = () => {
     },
   ];
 
+  // Reset categories when switching to drag and drop mode
+  useEffect(() => {
+    if (activityMode === "dragdrop") {
+      setCategories({
+        presumptive: [],
+        probable: [],
+        positive: [],
+        unassigned: [
+          "Missed menstrual period",
+          "Nausea and vomiting",
+          "Fatigue",
+          "Breast tenderness",
+          "Positive home pregnancy test",
+          "Chadwick's sign (bluish vagina/cervix)",
+          "Goodell's sign (softened cervix)",
+          "Fetal heart tones on ultrasound",
+          "Fetal movement felt by examiner",
+          "Visualization of fetus on ultrasound",
+          "Hegar's sign (softened uterine isthmus)",
+          "Braxton Hicks contractions",
+          "Urinary frequency",
+          "Abdominal enlargement",
+          "Pigmentation changes (linea nigra)",
+        ],
+      });
+    }
+  }, [activityMode]);
+
   const handleDragStart = (e, item) => {
     setDraggedItem(item);
   };
@@ -119,6 +148,32 @@ const PregnancySignsQuiz = () => {
   };
 
   const handleDrop = (e, category) => {
+    e.preventDefault();
+
+    if (!draggedItem) return;
+
+    // Remove from previous category
+    const updatedCategories = { ...categories };
+
+    Object.keys(updatedCategories).forEach((cat) => {
+      updatedCategories[cat] = updatedCategories[cat].filter(
+        (item) => item !== draggedItem
+      );
+    });
+
+    // Add to new category
+    updatedCategories[category] = [...updatedCategories[category], draggedItem];
+
+    setCategories(updatedCategories);
+    setDraggedItem(null);
+  };
+
+  // Handle touch events for mobile
+  const handleTouchStart = (item) => {
+    setDraggedItem(item);
+  };
+
+  const handleTouchEnd = (e, category) => {
     e.preventDefault();
 
     if (!draggedItem) return;
@@ -154,13 +209,12 @@ const PregnancySignsQuiz = () => {
       });
     });
 
-    const maxScore =
-      categories.unassigned.length +
-      categories.presumptive.length +
-      categories.probable.length +
-      categories.positive.length;
+    const totalItems =
+      correctCategories.presumptive.length +
+      correctCategories.probable.length +
+      correctCategories.positive.length;
 
-    return Math.round((score / categories.unassigned.length) * 100);
+    return Math.round((score / totalItems) * 100);
   };
 
   const handleAnswer = (selectedOption) => {
@@ -191,13 +245,18 @@ const PregnancySignsQuiz = () => {
   };
 
   const startQuiz = () => {
+    setActivityMode("quiz");
     setQuizState({
-      ...quizState,
       started: true,
+      completed: false,
+      currentQuestion: 0,
+      score: 0,
+      answers: [],
     });
   };
 
   const restartQuiz = () => {
+    setActivityMode("quiz");
     setQuizState({
       started: true,
       completed: false,
@@ -208,36 +267,13 @@ const PregnancySignsQuiz = () => {
   };
 
   const startDragDrop = () => {
+    setActivityMode("dragdrop");
     setQuizState({
       started: false,
       completed: false,
       currentQuestion: 0,
       score: 0,
       answers: [],
-    });
-
-    // Reset categories
-    setCategories({
-      presumptive: [],
-      probable: [],
-      positive: [],
-      unassigned: [
-        "Missed menstrual period",
-        "Nausea and vomiting",
-        "Fatigue",
-        "Breast tenderness",
-        "Positive home pregnancy test",
-        "Chadwick's sign (bluish vagina/cervix)",
-        "Goodell's sign (softened cervix)",
-        "Fetal heart tones on ultrasound",
-        "Fetal movement felt by examiner",
-        "Visualization of fetus on ultrasound",
-        "Hegar's sign (softened uterine isthmus)",
-        "Braxton Hicks contractions",
-        "Urinary frequency",
-        "Abdominal enlargement",
-        "Pigmentation changes (linea nigra)",
-      ],
     });
   };
 
@@ -251,7 +287,18 @@ const PregnancySignsQuiz = () => {
     });
   };
 
-  const { started, completed, currentQuestion, score } = quizState;
+  const backToSelection = () => {
+    setActivityMode("selection");
+    setQuizState({
+      started: false,
+      completed: false,
+      currentQuestion: 0,
+      score: 0,
+      answers: [],
+    });
+  };
+
+  const { completed, currentQuestion, score } = quizState;
   const currentQ = questions[currentQuestion];
 
   const renderQuiz = () => {
@@ -415,6 +462,7 @@ const PregnancySignsQuiz = () => {
             className="bg-gray-100 p-3 rounded-lg min-h-32"
             onDragOver={handleDragOver}
             onDrop={(e) => handleDrop(e, "unassigned")}
+            onTouchEnd={(e) => handleTouchEnd(e, "unassigned")}
           >
             <h4 className="font-medium text-gray-700 mb-2">Unassigned Signs</h4>
             <div className="flex flex-col gap-2">
@@ -423,6 +471,7 @@ const PregnancySignsQuiz = () => {
                   key={index}
                   draggable
                   onDragStart={(e) => handleDragStart(e, item)}
+                  onTouchStart={() => handleTouchStart(item)}
                   className="bg-white p-2 rounded border border-gray-300 cursor-move text-sm hover:bg-gray-50"
                 >
                   {item}
@@ -435,6 +484,7 @@ const PregnancySignsQuiz = () => {
             className="bg-blue-50 p-3 rounded-lg min-h-32"
             onDragOver={handleDragOver}
             onDrop={(e) => handleDrop(e, "presumptive")}
+            onTouchEnd={(e) => handleTouchEnd(e, "presumptive")}
           >
             <h4 className="font-medium text-blue-700 mb-2">
               Presumptive Signs
@@ -445,6 +495,7 @@ const PregnancySignsQuiz = () => {
                   key={index}
                   draggable
                   onDragStart={(e) => handleDragStart(e, item)}
+                  onTouchStart={() => handleTouchStart(item)}
                   className="bg-white p-2 rounded border border-blue-200 cursor-move text-sm hover:bg-blue-50"
                 >
                   {item}
@@ -457,6 +508,7 @@ const PregnancySignsQuiz = () => {
             className="bg-purple-50 p-3 rounded-lg min-h-32"
             onDragOver={handleDragOver}
             onDrop={(e) => handleDrop(e, "probable")}
+            onTouchEnd={(e) => handleTouchEnd(e, "probable")}
           >
             <h4 className="font-medium text-purple-700 mb-2">Probable Signs</h4>
             <div className="flex flex-col gap-2">
@@ -465,6 +517,7 @@ const PregnancySignsQuiz = () => {
                   key={index}
                   draggable
                   onDragStart={(e) => handleDragStart(e, item)}
+                  onTouchStart={() => handleTouchStart(item)}
                   className="bg-white p-2 rounded border border-purple-200 cursor-move text-sm hover:bg-purple-50"
                 >
                   {item}
@@ -477,6 +530,7 @@ const PregnancySignsQuiz = () => {
             className="bg-green-50 p-3 rounded-lg min-h-32"
             onDragOver={handleDragOver}
             onDrop={(e) => handleDrop(e, "positive")}
+            onTouchEnd={(e) => handleTouchEnd(e, "positive")}
           >
             <h4 className="font-medium text-green-700 mb-2">Positive Signs</h4>
             <div className="flex flex-col gap-2">
@@ -485,6 +539,7 @@ const PregnancySignsQuiz = () => {
                   key={index}
                   draggable
                   onDragStart={(e) => handleDragStart(e, item)}
+                  onTouchStart={() => handleTouchStart(item)}
                   className="bg-white p-2 rounded border border-green-200 cursor-move text-sm hover:bg-green-50"
                 >
                   {item}
@@ -530,13 +585,14 @@ const PregnancySignsQuiz = () => {
     );
   };
 
+  // Render the component based on the activity mode
   return (
     <div className="bg-white border rounded-lg overflow-hidden mb-6">
       <div className="bg-indigo-600 text-white px-4 py-2">
         Pregnancy Signs Learning Activities
       </div>
       <div className="p-6">
-        {!started && !completed ? (
+        {activityMode === "selection" && (
           <div className="text-center">
             <h3 className="text-xl font-bold text-indigo-700 mb-4">
               Choose an Activity
@@ -578,11 +634,10 @@ const PregnancySignsQuiz = () => {
               </div>
             </div>
           </div>
-        ) : started ? (
-          renderQuiz()
-        ) : (
-          renderDragDrop()
         )}
+
+        {activityMode === "quiz" && renderQuiz()}
+        {activityMode === "dragdrop" && renderDragDrop()}
       </div>
     </div>
   );
