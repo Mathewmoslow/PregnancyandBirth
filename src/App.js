@@ -7,12 +7,14 @@ import PregnancySignsQuiz from "./components/PregnancySignsQuiz";
 import PregnancyBodyChangesSimulator from "./components/PregnancyBodyChangesSimulator";
 import TeratogenExplorer from "./components/TeratogenExplorer";
 import WomensHealthAssessment from "./components/WomensHealthAssessment";
+import FinalExam from "./components/FinalExam";
 
 function App() {
   const [activeModule, setActiveModule] = useState("intro");
   const [completedModules, setCompletedModules] = useState([]);
+  const [examResults, setExamResults] = useState(null);
 
-  // Define all modules for the navigation - Updated order and added missing modules
+  // Define all modules for the navigation - Updated to include final exam
   const modules = [
     { id: "intro", name: "Introduction" },
     { id: "womenshealth", name: "Women's Health" },
@@ -23,6 +25,7 @@ function App() {
     { id: "bodychanges", name: "Body Changes" },
     { id: "complications", name: "Complications" },
     { id: "labor", name: "Labor & Birth" },
+    { id: "finalexam", name: "Final Exam" },
   ];
 
   // Find current module index
@@ -69,6 +72,12 @@ function App() {
     } else {
       navigateToModule("intro"); // Loop back to start if at the end
     }
+  };
+
+  // Handle exam completion
+  const handleExamCompletion = (results) => {
+    setExamResults(results);
+    completeModule("finalexam");
   };
 
   return (
@@ -257,6 +266,7 @@ function App() {
                     <li>Teratogen explorer</li>
                     <li>Labor stages interactive simulation</li>
                     <li>Knowledge check quizzes</li>
+                    <li>Comprehensive final exam</li>
                   </ul>
                 </div>
               </div>
@@ -768,6 +778,78 @@ function App() {
             </div>
 
             <LaborSimulation />
+
+            <div className="flex justify-between mt-8">
+              <button
+                onClick={navigateToPrevious}
+                className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md font-medium hover:bg-gray-300 transition-colors"
+              >
+                Previous Module
+              </button>
+              <button
+                onClick={navigateToNext}
+                className="px-4 py-2 bg-indigo-600 text-white rounded-md font-medium hover:bg-indigo-700 transition-colors"
+              >
+                Next Module: Final Exam
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Final Exam Module */}
+        {activeModule === "finalexam" && (
+          <div className="bg-white rounded-lg shadow-md p-4 sm:p-5 md:p-6 mb-6">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b pb-4 mb-4">
+              <h2 className="text-xl sm:text-2xl font-bold text-indigo-700 mb-2 sm:mb-0">
+                Comprehensive OB/GYN Final Exam
+              </h2>
+              <span className="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-sm font-medium">
+                Module 10 of {modules.length}
+              </span>
+            </div>
+
+            <div className="mb-6">
+              <p className="text-gray-700">
+                This comprehensive exam will test your knowledge across all areas of obstetrics 
+                and gynecology covered in the previous modules. The exam consists of 200 multiple-choice 
+                questions divided into 4 sets of 50 questions, with 2 hours allocated for each set.
+              </p>
+              <div className="bg-indigo-50 border-l-4 border-indigo-500 p-4 mt-4">
+                <h3 className="text-lg font-semibold text-indigo-700 mb-2">
+                  Final Exam Instructions
+                </h3>
+                <p className="text-gray-700 mb-2">
+                  The exam will test your knowledge on the following topics:
+                </p>
+                <ul className="list-disc list-inside space-y-1 text-gray-700">
+                  <li>Women's health and gynecology</li>
+                  <li>Conception and pregnancy dating</li>
+                  <li>Obstetric terminology and GTPAL system</li>
+                  <li>Pregnancy signs and diagnosis</li>
+                  <li>Fetal development and pregnancy timeline</li>
+                  <li>Maternal physiological changes</li>
+                  <li>Pregnancy complications and teratogens</li>
+                  <li>Labor and delivery</li>
+                  <li>Postpartum care</li>
+                </ul>
+              </div>
+            </div>
+
+            <FinalExam onComplete={handleExamCompletion} />
+
+            {examResults && (
+              <div className="mt-8 bg-green-50 border-l-4 border-green-500 p-4">
+                <h3 className="text-lg font-semibold text-green-700 mb-2">
+                  Congratulations on Completing the Course!
+                </h3>
+                <p className="text-gray-700 mb-2">
+                  You have successfully completed all modules and the final exam. Your final score was {examResults.totalScore} out of {examResults.totalQuestions} ({examResults.percentageScore.toFixed(1)}%).
+                </p>
+                <p className="text-gray-700">
+                  You may return to any module to review the material or restart the exam.
+                </p>
+              </div>
+            )}
 
             <div className="flex justify-between mt-8">
               <button
