@@ -2,7 +2,7 @@
   "name": "pregnancy-learning-platform",
   "version": "1.0.0",
   "description": "Interactive learning platform for pregnancy and childbirth concepts",
-  "homepage": "https://mathewmoslow.github.io/PregnancyandBirth/",
+  "homepage": "https://Mathewmoslow.github.io/PregnancyandBirth/",
   "keywords": ["react", "education", "obstetrics", "pregnancy"],
   "main": "src/index.js",
   "dependencies": {
