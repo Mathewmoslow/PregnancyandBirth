@@ -4,20 +4,25 @@ import DueDateCalculator from "./components/DueDateCalculator";
 import GTPALCalculator from "./components/GTPALCalculator";
 import LaborSimulation from "./components/LaborSimulation";
 import PregnancySignsQuiz from "./components/PregnancySignsQuiz";
+import PregnancyBodyChangesSimulator from "./components/PregnancyBodyChangesSimulator";
+import TeratogenExplorer from "./components/TeratogenExplorer";
+import WomensHealthAssessment from "./components/WomensHealthAssessment";
 
 function App() {
   const [activeModule, setActiveModule] = useState("intro");
   const [completedModules, setCompletedModules] = useState([]);
 
-  // Define all modules for the navigation
+  // Define all modules for the navigation - Updated order and added missing modules
   const modules = [
     { id: "intro", name: "Introduction" },
+    { id: "womenshealth", name: "Women's Health" },
     { id: "basics", name: "Conception & Dating" },
-    { id: "timeline", name: "Pregnancy Timeline" },
     { id: "gtpal", name: "GTPAL System" },
-    { id: "labor", name: "Labor & Birth" },
     { id: "signs", name: "Pregnancy Signs" },
+    { id: "timeline", name: "Pregnancy Timeline" },
+    { id: "bodychanges", name: "Body Changes" },
     { id: "complications", name: "Complications" },
+    { id: "labor", name: "Labor & Birth" },
   ];
 
   // Find current module index
@@ -166,15 +171,6 @@ function App() {
                     >
                       {index + 1}
                     </div>
-                    <span
-                      className={`hidden sm:block text-xs transition-all ${
-                        isCurrent
-                          ? "text-indigo-700 font-medium"
-                          : "text-gray-500"
-                      }`}
-                    >
-                      {module.name}
-                    </span>
                   </button>
                 );
               })}
@@ -240,6 +236,8 @@ function App() {
                     <li>
                       Understand the stages and processes of labor and birth
                     </li>
+                    <li>Learn about physiological changes during pregnancy</li>
+                    <li>Recognize complications and their management</li>
                   </ul>
                 </div>
               </div>
@@ -254,6 +252,9 @@ function App() {
                     <li>Due date calculator</li>
                     <li>Fetal development visualization</li>
                     <li>GTPAL system practice</li>
+                    <li>Body changes simulator</li>
+                    <li>Pregnancy signs quiz</li>
+                    <li>Teratogen explorer</li>
                     <li>Labor stages interactive simulation</li>
                     <li>Knowledge check quizzes</li>
                   </ul>
@@ -263,10 +264,51 @@ function App() {
 
             <div className="flex justify-center">
               <button
-                onClick={() => navigateToModule("basics")}
+                onClick={() => navigateToModule("womenshealth")}
                 className="px-6 py-3 bg-indigo-600 text-white rounded-md font-medium hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors"
               >
                 Start Learning
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Women's Health Module */}
+        {activeModule === "womenshealth" && (
+          <div className="bg-white rounded-lg shadow-md p-4 sm:p-5 md:p-6 mb-6">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b pb-4 mb-4">
+              <h2 className="text-xl sm:text-2xl font-bold text-indigo-700 mb-2 sm:mb-0">
+                Women's Health Assessment
+              </h2>
+              <span className="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-sm font-medium">
+                Module 2 of {modules.length}
+              </span>
+            </div>
+
+            <div className="mb-6">
+              <p className="text-gray-700">
+                Before diving into pregnancy-specific topics, it's important to
+                understand key concepts in women's health. This module
+                introduces essential topics and tests your knowledge of maternal
+                health trends, hormonal influences, and ethical considerations
+                in women's healthcare.
+              </p>
+            </div>
+
+            <WomensHealthAssessment />
+
+            <div className="flex justify-between mt-8">
+              <button
+                onClick={navigateToPrevious}
+                className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md font-medium hover:bg-gray-300 transition-colors"
+              >
+                Previous Module
+              </button>
+              <button
+                onClick={navigateToNext}
+                className="px-4 py-2 bg-indigo-600 text-white rounded-md font-medium hover:bg-indigo-700 transition-colors"
+              >
+                Next Module
               </button>
             </div>
           </div>
@@ -280,7 +322,7 @@ function App() {
                 Conception & Pregnancy Dating
               </h2>
               <span className="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-sm font-medium">
-                Module 2 of {modules.length}
+                Module 3 of {modules.length}
               </span>
             </div>
 
@@ -336,6 +378,46 @@ function App() {
           </div>
         )}
 
+        {/* Pregnancy Signs Module */}
+        {activeModule === "signs" && (
+          <div className="bg-white rounded-lg shadow-md p-4 sm:p-5 md:p-6 mb-6">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b pb-4 mb-4">
+              <h2 className="text-xl sm:text-2xl font-bold text-indigo-700 mb-2 sm:mb-0">
+                Pregnancy Signs & Symptoms
+              </h2>
+              <span className="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-sm font-medium">
+                Module 7 of {modules.length}
+              </span>
+            </div>
+
+            <div className="mb-6">
+              <p className="text-gray-700">
+                Recognizing the signs and symptoms of pregnancy is crucial for
+                healthcare providers. In this module, you'll learn about the
+                different categories of pregnancy signs and test your knowledge
+                with interactive activities.
+              </p>
+            </div>
+
+            <PregnancySignsQuiz />
+
+            <div className="flex justify-between mt-8">
+              <button
+                onClick={navigateToPrevious}
+                className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md font-medium hover:bg-gray-300 transition-colors"
+              >
+                Previous Module
+              </button>
+              <button
+                onClick={navigateToNext}
+                className="px-4 py-2 bg-indigo-600 text-white rounded-md font-medium hover:bg-indigo-700 transition-colors"
+              >
+                Next Module
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Pregnancy Timeline Module */}
         {activeModule === "timeline" && (
           <div className="bg-white rounded-lg shadow-md p-4 sm:p-5 md:p-6 mb-6">
@@ -344,7 +426,7 @@ function App() {
                 Pregnancy Timeline
               </h2>
               <span className="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-sm font-medium">
-                Module 3 of {modules.length}
+                Module 5 of {modules.length}
               </span>
             </div>
 
@@ -358,6 +440,46 @@ function App() {
             </div>
 
             <PregnancyTimeline />
+
+            <div className="flex justify-between mt-8">
+              <button
+                onClick={navigateToPrevious}
+                className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md font-medium hover:bg-gray-300 transition-colors"
+              >
+                Previous Module
+              </button>
+              <button
+                onClick={navigateToNext}
+                className="px-4 py-2 bg-indigo-600 text-white rounded-md font-medium hover:bg-indigo-700 transition-colors"
+              >
+                Next Module
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Body Changes Module */}
+        {activeModule === "bodychanges" && (
+          <div className="bg-white rounded-lg shadow-md p-4 sm:p-5 md:p-6 mb-6">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b pb-4 mb-4">
+              <h2 className="text-xl sm:text-2xl font-bold text-indigo-700 mb-2 sm:mb-0">
+                Maternal Physiological Changes
+              </h2>
+              <span className="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-sm font-medium">
+                Module 6 of {modules.length}
+              </span>
+            </div>
+
+            <div className="mb-6">
+              <p className="text-gray-700">
+                Pregnancy triggers numerous adaptations in the maternal body to
+                support fetal development. This module explores the
+                physiological changes across different body systems by trimester
+                and their clinical significance.
+              </p>
+            </div>
+
+            <PregnancyBodyChangesSimulator />
 
             <div className="flex justify-between mt-8">
               <button
@@ -415,6 +537,164 @@ function App() {
           </div>
         )}
 
+        {/* Complications Module */}
+        {activeModule === "complications" && (
+          <div className="bg-white rounded-lg shadow-md p-4 sm:p-5 md:p-6 mb-6">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b pb-4 mb-4">
+              <h2 className="text-xl sm:text-2xl font-bold text-indigo-700 mb-2 sm:mb-0">
+                Pregnancy Complications
+              </h2>
+              <span className="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-sm font-medium">
+                Module 8 of {modules.length}
+              </span>
+            </div>
+
+            <div className="mb-6">
+              <p className="text-gray-700">
+                Recognizing and managing pregnancy complications is essential
+                for optimizing maternal and fetal outcomes. This module explores
+                common complications and teratogens that can affect pregnancy.
+              </p>
+            </div>
+
+            <div className="bg-white border rounded-lg overflow-hidden mb-6">
+              <div className="bg-indigo-600 text-white px-4 py-2">
+                Hypertensive Disorders
+              </div>
+              <div className="p-4">
+                <h3 className="font-semibold text-indigo-700 mb-2">
+                  Gestational Hypertension
+                </h3>
+                <ul className="list-disc list-inside space-y-1 text-gray-700 mb-4">
+                  <li>New-onset hypertension after 20 weeks gestation</li>
+                  <li>
+                    BP ≥140/90 mmHg on two occasions, at least 4 hours apart
+                  </li>
+                  <li>No proteinuria or other signs of organ damage</li>
+                  <li>Often resolves postpartum</li>
+                </ul>
+
+                <h3 className="font-semibold text-indigo-700 mb-2">
+                  Preeclampsia
+                </h3>
+                <ul className="list-disc list-inside space-y-1 text-gray-700 mb-4">
+                  <li>Hypertension plus proteinuria or end-organ damage</li>
+                  <li>
+                    Symptoms: headache, visual changes, epigastric pain, edema
+                  </li>
+                  <li>
+                    Risk factors: primiparity, previous preeclampsia, chronic
+                    hypertension, diabetes
+                  </li>
+                  <li>
+                    Management: monitoring, antihypertensives, magnesium
+                    sulfate, delivery when necessary
+                  </li>
+                </ul>
+
+                <h3 className="font-semibold text-indigo-700 mb-2">
+                  HELLP Syndrome
+                </h3>
+                <ul className="list-disc list-inside space-y-1 text-gray-700 mb-4">
+                  <li>Severe form of preeclampsia</li>
+                  <li>Hemolysis, Elevated Liver enzymes, Low Platelets</li>
+                  <li>Requires prompt delivery and intensive management</li>
+                </ul>
+
+                <h3 className="font-semibold text-indigo-700 mb-2">
+                  Eclampsia
+                </h3>
+                <ul className="list-disc list-inside space-y-1 text-gray-700">
+                  <li>Preeclampsia with seizures</li>
+                  <li>Medical emergency requiring immediate intervention</li>
+                  <li>
+                    Management: seizure control, blood pressure management,
+                    expedited delivery
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <div className="bg-white border rounded-lg overflow-hidden mb-6">
+              <div className="bg-indigo-600 text-white px-4 py-2">
+                Other Common Complications
+              </div>
+              <div className="p-4">
+                <h3 className="font-semibold text-indigo-700 mb-2">
+                  Gestational Diabetes Mellitus (GDM)
+                </h3>
+                <ul className="list-disc list-inside space-y-1 text-gray-700 mb-4">
+                  <li>
+                    Carbohydrate intolerance first diagnosed during pregnancy
+                  </li>
+                  <li>Screening: 50g glucose challenge test at 24-28 weeks</li>
+                  <li>
+                    Complications: macrosomia, birth trauma, neonatal
+                    hypoglycemia
+                  </li>
+                  <li>
+                    Management: diet modification, glucose monitoring, insulin
+                    when needed
+                  </li>
+                </ul>
+
+                <h3 className="font-semibold text-indigo-700 mb-2">
+                  Bleeding Disorders
+                </h3>
+                <ul className="list-disc list-inside space-y-1 text-gray-700 mb-4">
+                  <li>
+                    <strong>First Trimester:</strong> Miscarriage, ectopic
+                    pregnancy, molar pregnancy
+                  </li>
+                  <li>
+                    <strong>Second/Third Trimester:</strong> Placenta previa,
+                    placental abruption, vasa previa
+                  </li>
+                </ul>
+
+                <h3 className="font-semibold text-indigo-700 mb-2">
+                  Other Complications
+                </h3>
+                <ul className="list-disc list-inside space-y-1 text-gray-700">
+                  <li>
+                    <strong>Hyperemesis Gravidarum:</strong> Severe nausea and
+                    vomiting beyond first trimester
+                  </li>
+                  <li>
+                    <strong>Oligohydramnios/Polyhydramnios:</strong> Abnormal
+                    amniotic fluid volume
+                  </li>
+                  <li>
+                    <strong>Intrauterine Growth Restriction (IUGR):</strong>{" "}
+                    Fetal growth less than expected
+                  </li>
+                  <li>
+                    <strong>Premature Rupture of Membranes (PROM):</strong>{" "}
+                    Rupture before onset of labor
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <TeratogenExplorer />
+
+            <div className="flex justify-between mt-8">
+              <button
+                onClick={navigateToPrevious}
+                className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md font-medium hover:bg-gray-300 transition-colors"
+              >
+                Previous Module
+              </button>
+              <button
+                onClick={navigateToNext}
+                className="px-4 py-2 bg-indigo-600 text-white rounded-md font-medium hover:bg-indigo-700 transition-colors"
+              >
+                Next Module
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Labor & Birth Module */}
         {activeModule === "labor" && (
           <div className="bg-white rounded-lg shadow-md p-4 sm:p-5 md:p-6 mb-6">
@@ -423,7 +703,7 @@ function App() {
                 Labor & Birth Simulation
               </h2>
               <span className="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-sm font-medium">
-                Module 5 of {modules.length}
+                Module 9 of {modules.length}
               </span>
             </div>
 
@@ -436,84 +716,58 @@ function App() {
               </p>
             </div>
 
+            <div className="bg-white border rounded-lg overflow-hidden mb-6">
+              <div className="bg-indigo-600 text-white px-4 py-2">
+                Pain Management in Labor
+              </div>
+              <div className="p-4">
+                <h3 className="font-semibold text-indigo-700 mb-2">
+                  Non-pharmacologic Methods
+                </h3>
+                <ul className="list-disc list-inside space-y-1 text-gray-700 mb-4">
+                  <li>Breathing techniques and relaxation</li>
+                  <li>Position changes and movement</li>
+                  <li>Hydrotherapy (shower, tub)</li>
+                  <li>Massage and counterpressure</li>
+                  <li>Heat and cold therapy</li>
+                  <li>TENS (transcutaneous electrical nerve stimulation)</li>
+                </ul>
+
+                <h3 className="font-semibold text-indigo-700 mb-2">
+                  Pharmacologic Methods
+                </h3>
+                <ul className="list-disc list-inside space-y-1 text-gray-700">
+                  <li>
+                    <strong>Systemic analgesics:</strong> Opioids (reduced pain
+                    perception)
+                  </li>
+                  <li>
+                    <strong>Regional anesthesia:</strong>
+                    <ul className="list-disc list-inside ml-5 text-gray-700">
+                      <li>Epidural: continuous infusion in epidural space</li>
+                      <li>
+                        Combined spinal-epidural (CSE): rapid onset with
+                        long-lasting relief
+                      </li>
+                      <li>
+                        Spinal: single injection for cesarean delivery or late
+                        labor
+                      </li>
+                    </ul>
+                  </li>
+                  <li>
+                    <strong>Inhaled analgesics:</strong> Nitrous oxide
+                    (self-administered)
+                  </li>
+                  <li>
+                    <strong>Local anesthesia:</strong> For episiotomy or
+                    laceration repair
+                  </li>
+                </ul>
+              </div>
+            </div>
+
             <LaborSimulation />
-
-            <div className="flex justify-between mt-8">
-              <button
-                onClick={navigateToPrevious}
-                className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md font-medium hover:bg-gray-300 transition-colors"
-              >
-                Previous Module
-              </button>
-              <button
-                onClick={navigateToNext}
-                className="px-4 py-2 bg-indigo-600 text-white rounded-md font-medium hover:bg-indigo-700 transition-colors"
-              >
-                Next Module
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* Pregnancy Signs Module */}
-        {activeModule === "signs" && (
-          <div className="bg-white rounded-lg shadow-md p-4 sm:p-5 md:p-6 mb-6">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b pb-4 mb-4">
-              <h2 className="text-xl sm:text-2xl font-bold text-indigo-700 mb-2 sm:mb-0">
-                Pregnancy Signs & Symptoms
-              </h2>
-              <span className="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-sm font-medium">
-                Module 6 of {modules.length}
-              </span>
-            </div>
-
-            <div className="mb-6">
-              <p className="text-gray-700">
-                Recognizing the signs and symptoms of pregnancy is crucial for
-                healthcare providers. In this module, you'll learn about the
-                different categories of pregnancy signs and test your knowledge
-                with interactive activities.
-              </p>
-            </div>
-
-            {/* PregnancySignsQuiz already contains both quiz and drag-and-drop functionality */}
-            <PregnancySignsQuiz />
-
-            <div className="flex justify-between mt-8">
-              <button
-                onClick={navigateToPrevious}
-                className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md font-medium hover:bg-gray-300 transition-colors"
-              >
-                Previous Module
-              </button>
-              <button
-                onClick={navigateToNext}
-                className="px-4 py-2 bg-indigo-600 text-white rounded-md font-medium hover:bg-indigo-700 transition-colors"
-              >
-                Next Module
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* Complications Module */}
-        {activeModule === "complications" && (
-          <div className="bg-white rounded-lg shadow-md p-4 sm:p-5 md:p-6 mb-6">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b pb-4 mb-4">
-              <h2 className="text-xl sm:text-2xl font-bold text-indigo-700 mb-2 sm:mb-0">
-                Pregnancy Complications
-              </h2>
-              <span className="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-sm font-medium">
-                Module 7 of {modules.length}
-              </span>
-            </div>
-
-            <div className="mb-6">
-              <p className="text-gray-700">
-                This module is under development. Check back soon for
-                interactive content on pregnancy complications and management.
-              </p>
-            </div>
 
             <div className="flex justify-between mt-8">
               <button
@@ -526,7 +780,7 @@ function App() {
                 onClick={() => navigateToModule("intro")}
                 className="px-4 py-2 bg-indigo-600 text-white rounded-md font-medium hover:bg-indigo-700 transition-colors"
               >
-                Return to Start
+                Return to Introduction
               </button>
             </div>
           </div>
