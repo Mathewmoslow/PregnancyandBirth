@@ -12,6 +12,24 @@ function App() {
   const [activeModule, setActiveModule] = useState("intro");
   const [completedModules, setCompletedModules] = useState([]);
 
+  // Define all modules for the navigation - Updated order and added missing modules
+  const modules = [
+    { id: "intro", name: "Introduction" },
+    { id: "womenshealth", name: "Women's Health" },
+    { id: "basics", name: "Conception & Dating" },
+    { id: "gtpal", name: "GTPAL System" },
+    { id: "signs", name: "Pregnancy Signs" },
+    { id: "timeline", name: "Pregnancy Timeline" },
+    { id: "bodychanges", name: "Body Changes" },
+    { id: "complications", name: "Complications" },
+    { id: "labor", name: "Labor & Birth" },
+  ];
+
+  // Find current module index
+  const currentModuleIndex = modules.findIndex(
+    (module) => module.id === activeModule
+  );
+
   // Track module completion
   const completeModule = (moduleId) => {
     if (!completedModules.includes(moduleId)) {
@@ -21,8 +39,7 @@ function App() {
 
   // Calculate progress percentage
   const getProgressPercentage = () => {
-    const totalModules = 10; // Updated total number of modules
-    return (completedModules.length / totalModules) * 100;
+    return (completedModules.length / modules.length) * 100;
   };
 
   // Navigate to a module and mark it as visited
@@ -32,138 +49,137 @@ function App() {
     window.scrollTo(0, 0);
   };
 
+  // Navigate to previous module
+  const navigateToPrevious = () => {
+    const currentIndex = modules.findIndex(
+      (module) => module.id === activeModule
+    );
+    if (currentIndex > 0) {
+      navigateToModule(modules[currentIndex - 1].id);
+    }
+  };
+
+  // Navigate to next module
+  const navigateToNext = () => {
+    const currentIndex = modules.findIndex(
+      (module) => module.id === activeModule
+    );
+    if (currentIndex < modules.length - 1) {
+      navigateToModule(modules[currentIndex + 1].id);
+    } else {
+      navigateToModule("intro"); // Loop back to start if at the end
+    }
+  };
+
   return (
     <div className="pregnancy-learning-platform">
       <header className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white p-4 sm:p-5">
         <div className="container mx-auto">
-          <h1 className="text-2xl sm:text-3xl font-bold mb-2">
+          <h1 className="text-2xl sm:text-3xl font-bold mb-2 text-center">
             Pregnancy & Childbirth Learning Platform
           </h1>
-          <p>
+          <p className="text-center">
             Interactive learning modules to help you master obstetric concepts
           </p>
         </div>
       </header>
 
-      <nav className="sticky top-0 bg-white shadow-md z-10">
-        <div className="container mx-auto py-2 sm:py-3 px-4">
-          <div className="flex flex-col sm:flex-row justify-between items-center">
-            <div className="text-xl font-bold text-indigo-700 mb-2 sm:mb-0">
-              OB Learning
+      {/* Progress Navigation */}
+      <nav className="sticky top-0 bg-white shadow-md z-10 py-3">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center justify-between mb-2">
+            <button
+              onClick={navigateToPrevious}
+              className={`flex items-center justify-center p-2 rounded-full ${
+                currentModuleIndex > 0
+                  ? "text-indigo-600 hover:bg-indigo-50"
+                  : "text-gray-300 cursor-not-allowed"
+              }`}
+              disabled={currentModuleIndex === 0}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M15 19l-7-7 7-7"
+                />
+              </svg>
+            </button>
+
+            <div className="text-lg font-bold text-indigo-700">
+              Module {currentModuleIndex + 1} of {modules.length}:{" "}
+              {modules[currentModuleIndex].name}
             </div>
-            <div className="flex flex-wrap justify-center gap-2">
-              <button
-                onClick={() => navigateToModule("intro")}
-                className={`px-3 py-2 rounded-md transition-colors ${
-                  activeModule === "intro"
-                    ? "bg-indigo-600 text-white"
-                    : "text-gray-700 hover:bg-gray-100"
-                }`}
+
+            <button
+              onClick={navigateToNext}
+              className="flex items-center justify-center p-2 rounded-full text-indigo-600 hover:bg-indigo-50"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
               >
-                Introduction
-              </button>
-              <button
-                onClick={() => navigateToModule("basics")}
-                className={`px-3 py-2 rounded-md transition-colors ${
-                  activeModule === "basics"
-                    ? "bg-indigo-600 text-white"
-                    : "text-gray-700 hover:bg-gray-100"
-                }`}
-              >
-                Conception & Dating
-              </button>
-              <button
-                onClick={() => navigateToModule("timeline")}
-                className={`px-3 py-2 rounded-md transition-colors ${
-                  activeModule === "timeline"
-                    ? "bg-indigo-600 text-white"
-                    : "text-gray-700 hover:bg-gray-100"
-                }`}
-              >
-                Pregnancy Timeline
-              </button>
-              <button
-                onClick={() => navigateToModule("gtpal")}
-                className={`px-3 py-2 rounded-md transition-colors ${
-                  activeModule === "gtpal"
-                    ? "bg-indigo-600 text-white"
-                    : "text-gray-700 hover:bg-gray-100"
-                }`}
-              >
-                GTPAL System
-              </button>
-              <button
-                onClick={() => navigateToModule("signs")}
-                className={`px-3 py-2 rounded-md transition-colors ${
-                  activeModule === "signs"
-                    ? "bg-indigo-600 text-white"
-                    : "text-gray-700 hover:bg-gray-100"
-                }`}
-              >
-                Pregnancy Signs
-              </button>
-              <button
-                onClick={() => navigateToModule("bodychanges")}
-                className={`px-3 py-2 rounded-md transition-colors ${
-                  activeModule === "bodychanges"
-                    ? "bg-indigo-600 text-white"
-                    : "text-gray-700 hover:bg-gray-100"
-                }`}
-              >
-                Body Changes
-              </button>
-              <button
-                onClick={() => navigateToModule("nutrition")}
-                className={`px-3 py-2 rounded-md transition-colors ${
-                  activeModule === "nutrition"
-                    ? "bg-indigo-600 text-white"
-                    : "text-gray-700 hover:bg-gray-100"
-                }`}
-              >
-                Nutrition
-              </button>
-              <button
-                onClick={() => navigateToModule("wellbeing")}
-                className={`px-3 py-2 rounded-md transition-colors ${
-                  activeModule === "wellbeing"
-                    ? "bg-indigo-600 text-white"
-                    : "text-gray-700 hover:bg-gray-100"
-                }`}
-              >
-                Fetal Wellbeing
-              </button>
-              <button
-                onClick={() => navigateToModule("complications")}
-                className={`px-3 py-2 rounded-md transition-colors ${
-                  activeModule === "complications"
-                    ? "bg-indigo-600 text-white"
-                    : "text-gray-700 hover:bg-gray-100"
-                }`}
-              >
-                Complications
-              </button>
-              <button
-                onClick={() => navigateToModule("labor")}
-                className={`px-3 py-2 rounded-md transition-colors ${
-                  activeModule === "labor"
-                    ? "bg-indigo-600 text-white"
-                    : "text-gray-700 hover:bg-gray-100"
-                }`}
-              >
-                Labor & Birth
-              </button>
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 5l7 7-7 7"
+                />
+              </svg>
+            </button>
+          </div>
+
+          {/* Module steps visualization */}
+          <div className="relative">
+            <div className="overflow-hidden h-2 mb-1 text-xs flex rounded bg-gray-200">
+              <div
+                style={{ width: `${getProgressPercentage()}%` }}
+                className="bg-gradient-to-r from-indigo-500 to-purple-500 transition-all duration-500"
+              ></div>
+            </div>
+
+            <div className="flex justify-between">
+              {modules.map((module, index) => {
+                const isCurrent = module.id === activeModule;
+                const isCompleted = completedModules.includes(module.id);
+
+                return (
+                  <button
+                    key={module.id}
+                    onClick={() => navigateToModule(module.id)}
+                    className="flex flex-col items-center group"
+                  >
+                    <div
+                      className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold mb-1 transition-all
+                        ${
+                          isCurrent
+                            ? "bg-indigo-600 text-white scale-125"
+                            : isCompleted
+                            ? "bg-indigo-200 text-indigo-700"
+                            : "bg-gray-200 text-gray-500"
+                        }`}
+                    >
+                      {index + 1}
+                    </div>
+                  </button>
+                );
+              })}
             </div>
           </div>
         </div>
       </nav>
 
       <div className="container mx-auto px-4 py-3">
-        <div className="w-full bg-gray-200 rounded-full h-3 mb-6">
-          <div
-            className="bg-gradient-to-r from-indigo-500 to-purple-500 h-3 rounded-full transition-all duration-500"
-            style={{ width: `${getProgressPercentage()}%` }}
-          ></div>
-        </div>
         {/* Introduction Module */}
         {activeModule === "intro" && (
           <div className="bg-white rounded-lg shadow-md p-4 sm:p-5 md:p-6 mb-6">
@@ -172,7 +188,7 @@ function App() {
                 Introduction to Pregnancy & Childbirth
               </h2>
               <span className="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-sm font-medium">
-                Module 1 of 10
+                Module 1 of {modules.length}
               </span>
             </div>
 
@@ -195,8 +211,8 @@ function App() {
                 How to Use This Platform
               </h3>
               <p className="text-gray-700">
-                Navigate through different modules using the navigation menu at
-                the top. Each module contains interactive elements to help
+                Navigate through different modules using the progress navigation
+                at the top. Each module contains interactive elements to help
                 reinforce your learning. Complete activities to increase your
                 progress bar and track your learning journey.
               </p>
@@ -238,7 +254,6 @@ function App() {
                     <li>GTPAL system practice</li>
                     <li>Body changes simulator</li>
                     <li>Pregnancy signs quiz</li>
-                    <li>Fetal wellbeing assessment tools</li>
                     <li>Teratogen explorer</li>
                     <li>Labor stages interactive simulation</li>
                     <li>Knowledge check quizzes</li>
@@ -249,7 +264,7 @@ function App() {
 
             <div className="flex justify-center">
               <button
-                onClick={() => navigateToModule("basics")}
+                onClick={() => navigateToModule("womenshealth")}
                 className="px-6 py-3 bg-indigo-600 text-white rounded-md font-medium hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors"
               >
                 Start Learning
@@ -257,6 +272,48 @@ function App() {
             </div>
           </div>
         )}
+
+        {/* Women's Health Module */}
+        {activeModule === "womenshealth" && (
+          <div className="bg-white rounded-lg shadow-md p-4 sm:p-5 md:p-6 mb-6">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b pb-4 mb-4">
+              <h2 className="text-xl sm:text-2xl font-bold text-indigo-700 mb-2 sm:mb-0">
+                Women's Health Assessment
+              </h2>
+              <span className="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-sm font-medium">
+                Module 2 of {modules.length}
+              </span>
+            </div>
+
+            <div className="mb-6">
+              <p className="text-gray-700">
+                Before diving into pregnancy-specific topics, it's important to
+                understand key concepts in women's health. This module
+                introduces essential topics and tests your knowledge of maternal
+                health trends, hormonal influences, and ethical considerations
+                in women's healthcare.
+              </p>
+            </div>
+
+            <WomensHealthAssessment />
+
+            <div className="flex justify-between mt-8">
+              <button
+                onClick={navigateToPrevious}
+                className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md font-medium hover:bg-gray-300 transition-colors"
+              >
+                Previous Module
+              </button>
+              <button
+                onClick={navigateToNext}
+                className="px-4 py-2 bg-indigo-600 text-white rounded-md font-medium hover:bg-indigo-700 transition-colors"
+              >
+                Next Module
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Conception & Dating Module */}
         {activeModule === "basics" && (
           <div className="bg-white rounded-lg shadow-md p-4 sm:p-5 md:p-6 mb-6">
@@ -265,7 +322,7 @@ function App() {
                 Conception & Pregnancy Dating
               </h2>
               <span className="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-sm font-medium">
-                Module 2 of 10
+                Module 3 of {modules.length}
               </span>
             </div>
 
@@ -304,22 +361,63 @@ function App() {
             </h3>
             <DueDateCalculator />
 
-            <div className="flex flex-col sm:flex-row justify-between mt-8 gap-3 sm:gap-0">
+            <div className="flex justify-between mt-8">
               <button
-                onClick={() => navigateToModule("intro")}
+                onClick={navigateToPrevious}
                 className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md font-medium hover:bg-gray-300 transition-colors"
               >
-                Previous: Introduction
+                Previous Module
               </button>
               <button
-                onClick={() => navigateToModule("timeline")}
+                onClick={navigateToNext}
                 className="px-4 py-2 bg-indigo-600 text-white rounded-md font-medium hover:bg-indigo-700 transition-colors"
               >
-                Next: Pregnancy Timeline
+                Next Module
               </button>
             </div>
           </div>
         )}
+
+        {/* Pregnancy Signs Module */}
+        {activeModule === "signs" && (
+          <div className="bg-white rounded-lg shadow-md p-4 sm:p-5 md:p-6 mb-6">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b pb-4 mb-4">
+              <h2 className="text-xl sm:text-2xl font-bold text-indigo-700 mb-2 sm:mb-0">
+                Pregnancy Signs & Symptoms
+              </h2>
+              <span className="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-sm font-medium">
+                Module 7 of {modules.length}
+              </span>
+            </div>
+
+            <div className="mb-6">
+              <p className="text-gray-700">
+                Recognizing the signs and symptoms of pregnancy is crucial for
+                healthcare providers. In this module, you'll learn about the
+                different categories of pregnancy signs and test your knowledge
+                with interactive activities.
+              </p>
+            </div>
+
+            <PregnancySignsQuiz />
+
+            <div className="flex justify-between mt-8">
+              <button
+                onClick={navigateToPrevious}
+                className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md font-medium hover:bg-gray-300 transition-colors"
+              >
+                Previous Module
+              </button>
+              <button
+                onClick={navigateToNext}
+                className="px-4 py-2 bg-indigo-600 text-white rounded-md font-medium hover:bg-indigo-700 transition-colors"
+              >
+                Next Module
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Pregnancy Timeline Module */}
         {activeModule === "timeline" && (
           <div className="bg-white rounded-lg shadow-md p-4 sm:p-5 md:p-6 mb-6">
@@ -328,7 +426,7 @@ function App() {
                 Pregnancy Timeline
               </h2>
               <span className="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-sm font-medium">
-                Module 3 of 10
+                Module 5 of {modules.length}
               </span>
             </div>
 
@@ -343,99 +441,23 @@ function App() {
 
             <PregnancyTimeline />
 
-            <div className="flex flex-col sm:flex-row justify-between mt-8 gap-3 sm:gap-0">
+            <div className="flex justify-between mt-8">
               <button
-                onClick={() => navigateToModule("basics")}
+                onClick={navigateToPrevious}
                 className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md font-medium hover:bg-gray-300 transition-colors"
               >
-                Previous: Conception & Dating
+                Previous Module
               </button>
               <button
-                onClick={() => navigateToModule("gtpal")}
+                onClick={navigateToNext}
                 className="px-4 py-2 bg-indigo-600 text-white rounded-md font-medium hover:bg-indigo-700 transition-colors"
               >
-                Next: GTPAL System
+                Next Module
               </button>
             </div>
           </div>
         )}
-        {/* GTPAL System Module */}
-        {activeModule === "gtpal" && (
-          <div className="bg-white rounded-lg shadow-md p-4 sm:p-5 md:p-6 mb-6">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b pb-4 mb-4">
-              <h2 className="text-xl sm:text-2xl font-bold text-indigo-700 mb-2 sm:mb-0">
-                Obstetric Terminology: GTPAL System
-              </h2>
-              <span className="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-sm font-medium">
-                Module 4 of 10
-              </span>
-            </div>
 
-            <div className="mb-6">
-              <p className="text-gray-700">
-                Medical professionals use specific terminology to describe
-                pregnancy history and status. In this module, you'll learn about
-                the GTPAL system and practice applying it to clinical scenarios.
-              </p>
-            </div>
-
-            <GTPALCalculator />
-
-            <div className="flex flex-col sm:flex-row justify-between mt-8 gap-3 sm:gap-0">
-              <button
-                onClick={() => navigateToModule("timeline")}
-                className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md font-medium hover:bg-gray-300 transition-colors"
-              >
-                Previous: Pregnancy Timeline
-              </button>
-              <button
-                onClick={() => navigateToModule("signs")}
-                className="px-4 py-2 bg-indigo-600 text-white rounded-md font-medium hover:bg-indigo-700 transition-colors"
-              >
-                Next: Pregnancy Signs
-              </button>
-            </div>
-          </div>
-        )}
-        {/* Pregnancy Signs Module */}
-        {activeModule === "signs" && (
-          <div className="bg-white rounded-lg shadow-md p-4 sm:p-5 md:p-6 mb-6">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b pb-4 mb-4">
-              <h2 className="text-xl sm:text-2xl font-bold text-indigo-700 mb-2 sm:mb-0">
-                Pregnancy Signs and Symptoms
-              </h2>
-              <span className="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-sm font-medium">
-                Module 5 of 10
-              </span>
-            </div>
-
-            <div className="mb-6">
-              <p className="text-gray-700">
-                Recognizing the signs and symptoms of pregnancy is essential for
-                clinical practice. In this module, you'll learn to distinguish
-                between presumptive, probable, and positive signs of pregnancy
-                through interactive activities.
-              </p>
-            </div>
-
-            <PregnancySignsQuiz />
-
-            <div className="flex flex-col sm:flex-row justify-between mt-8 gap-3 sm:gap-0">
-              <button
-                onClick={() => navigateToModule("gtpal")}
-                className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md font-medium hover:bg-gray-300 transition-colors"
-              >
-                Previous: GTPAL System
-              </button>
-              <button
-                onClick={() => navigateToModule("bodychanges")}
-                className="px-4 py-2 bg-indigo-600 text-white rounded-md font-medium hover:bg-indigo-700 transition-colors"
-              >
-                Next: Body Changes
-              </button>
-            </div>
-          </div>
-        )}
         {/* Body Changes Module */}
         {activeModule === "bodychanges" && (
           <div className="bg-white rounded-lg shadow-md p-4 sm:p-5 md:p-6 mb-6">
@@ -444,7 +466,7 @@ function App() {
                 Maternal Physiological Changes
               </h2>
               <span className="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-sm font-medium">
-                Module 6 of 10
+                Module 6 of {modules.length}
               </span>
             </div>
 
@@ -459,349 +481,71 @@ function App() {
 
             <PregnancyBodyChangesSimulator />
 
-            <div className="flex flex-col sm:flex-row justify-between mt-8 gap-3 sm:gap-0">
+            <div className="flex justify-between mt-8">
               <button
-                onClick={() => navigateToModule("signs")}
+                onClick={navigateToPrevious}
                 className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md font-medium hover:bg-gray-300 transition-colors"
               >
-                Previous: Pregnancy Signs
+                Previous Module
               </button>
               <button
-                onClick={() => navigateToModule("nutrition")}
+                onClick={navigateToNext}
                 className="px-4 py-2 bg-indigo-600 text-white rounded-md font-medium hover:bg-indigo-700 transition-colors"
               >
-                Next: Nutrition
+                Next Module
               </button>
             </div>
           </div>
         )}
-        {/* Nutrition Module */}
-        {activeModule === "nutrition" && (
+
+        {/* GTPAL System Module */}
+        {activeModule === "gtpal" && (
           <div className="bg-white rounded-lg shadow-md p-4 sm:p-5 md:p-6 mb-6">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b pb-4 mb-4">
               <h2 className="text-xl sm:text-2xl font-bold text-indigo-700 mb-2 sm:mb-0">
-                Nutrition and Health Promotion
+                Obstetric Terminology: GTPAL System
               </h2>
               <span className="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-sm font-medium">
-                Module 7 of 10
+                Module 4 of {modules.length}
               </span>
             </div>
 
             <div className="mb-6">
               <p className="text-gray-700">
-                Proper nutrition and lifestyle habits are critical for maternal
-                and fetal well-being. This module covers nutritional
-                requirements during pregnancy, weight gain recommendations, and
-                safe exercise practices.
+                Medical professionals use specific terminology to describe
+                pregnancy history and status. In this module, you'll learn about
+                the GTPAL system and practice applying it to clinical scenarios.
               </p>
             </div>
 
-            <div className="bg-white border rounded-lg overflow-hidden mb-6">
-              <div className="bg-indigo-600 text-white px-4 py-2">
-                Nutritional Requirements During Pregnancy
-              </div>
-              <div className="p-4">
-                <h3 className="font-semibold text-indigo-700 mb-2">
-                  Caloric Needs
-                </h3>
-                <p className="text-gray-700 mb-3">
-                  Pregnancy requires approximately 300 additional calories per
-                  day on average. This varies based on pre-pregnancy weight,
-                  activity level, and trimester:
-                </p>
-                <ul className="list-disc list-inside space-y-1 text-gray-700 mb-4">
-                  <li>First trimester: minimal additional calories needed</li>
-                  <li>Second and third trimesters: greater caloric demands</li>
-                </ul>
+            <GTPALCalculator />
 
-                <h3 className="font-semibold text-indigo-700 mb-2">
-                  Essential Nutrients
-                </h3>
-                <ul className="list-disc list-inside space-y-1 text-gray-700 mb-4">
-                  <li>
-                    <strong>Protein:</strong> Increased needs for fetal growth
-                    and maternal tissue development
-                  </li>
-                  <li>
-                    <strong>Iron:</strong> Prevents anemia; supports increased
-                    maternal blood volume and fetal iron stores
-                  </li>
-                  <li>
-                    <strong>Folic Acid:</strong> Critical for neural tube
-                    development; recommended 400-600 mcg daily
-                  </li>
-                  <li>
-                    <strong>Calcium:</strong> Supports fetal skeletal
-                    development; prevents maternal bone loss
-                  </li>
-                  <li>
-                    <strong>Vitamin D:</strong> Enhances calcium absorption;
-                    important for immune function
-                  </li>
-                  <li>
-                    <strong>Omega-3 Fatty Acids:</strong> Support fetal brain
-                    and eye development
-                  </li>
-                </ul>
-
-                <h3 className="font-semibold text-indigo-700 mb-2">
-                  Foods to Emphasize
-                </h3>
-                <ul className="list-disc list-inside space-y-1 text-gray-700 mb-4">
-                  <li>Lean proteins (meat, poultry, fish, legumes)</li>
-                  <li>Dairy products or calcium-fortified alternatives</li>
-                  <li>Whole grains</li>
-                  <li>Variety of fruits and vegetables</li>
-                  <li>Healthy fats (olive oil, avocados, nuts)</li>
-                </ul>
-
-                <h3 className="font-semibold text-indigo-700 mb-2">
-                  Foods to Avoid or Limit
-                </h3>
-                <ul className="list-disc list-inside space-y-1 text-gray-700">
-                  <li>Raw or undercooked meat, poultry, eggs, and seafood</li>
-                  <li>Unpasteurized dairy products</li>
-                  <li>Deli meats unless heated until steaming</li>
-                  <li>
-                    High-mercury fish (shark, swordfish, king mackerel,
-                    tilefish)
-                  </li>
-                  <li>Unwashed produce</li>
-                  <li>Excessive caffeine</li>
-                  <li>Alcohol (complete abstinence recommended)</li>
-                </ul>
-              </div>
-            </div>
-
-            <div className="bg-white border rounded-lg overflow-hidden mb-6">
-              <div className="bg-indigo-600 text-white px-4 py-2">
-                Weight Gain Recommendations
-              </div>
-              <div className="p-4">
-                <p className="text-gray-700 mb-3">
-                  Appropriate weight gain during pregnancy depends on
-                  pre-pregnancy BMI:
-                </p>
-                <div className="overflow-x-auto">
-                  <table className="min-w-full bg-white border">
-                    <thead>
-                      <tr className="bg-indigo-100">
-                        <th className="py-2 px-3 border text-left">
-                          Pre-pregnancy BMI
-                        </th>
-                        <th className="py-2 px-3 border text-left">
-                          Classification
-                        </th>
-                        <th className="py-2 px-3 border text-left">
-                          Recommended Weight Gain
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td className="py-2 px-3 border">Below 18.5</td>
-                        <td className="py-2 px-3 border">Underweight</td>
-                        <td className="py-2 px-3 border">28-40 pounds</td>
-                      </tr>
-                      <tr>
-                        <td className="py-2 px-3 border">18.5-24.9</td>
-                        <td className="py-2 px-3 border">Normal weight</td>
-                        <td className="py-2 px-3 border">25-35 pounds</td>
-                      </tr>
-                      <tr>
-                        <td className="py-2 px-3 border">25-29.9</td>
-                        <td className="py-2 px-3 border">Overweight</td>
-                        <td className="py-2 px-3 border">15-25 pounds</td>
-                      </tr>
-                      <tr>
-                        <td className="py-2 px-3 border">30 or greater</td>
-                        <td className="py-2 px-3 border">Obese</td>
-                        <td className="py-2 px-3 border">11-20 pounds</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-                <p className="text-sm text-gray-600 mt-2">
-                  Note: Twin pregnancies require additional weight gain.
-                </p>
-              </div>
-            </div>
-
-            <div className="bg-white border rounded-lg overflow-hidden mb-6">
-              <div className="bg-indigo-600 text-white px-4 py-2">
-                Exercise During Pregnancy
-              </div>
-              <div className="p-4">
-                <h3 className="font-semibold text-indigo-700 mb-2">Benefits</h3>
-                <ul className="list-disc list-inside space-y-1 text-gray-700 mb-4">
-                  <li>Improved cardiovascular fitness</li>
-                  <li>Reduced back pain</li>
-                  <li>Better weight management</li>
-                  <li>Decreased risk of gestational diabetes</li>
-                  <li>Improved mood and energy levels</li>
-                </ul>
-
-                <h3 className="font-semibold text-indigo-700 mb-2">
-                  Recommendations
-                </h3>
-                <p className="text-gray-700 mb-2">
-                  150 minutes of moderate activity per week (30 minutes, 5
-                  days/week)
-                </p>
-
-                <h3 className="font-semibold text-indigo-700 mb-2">
-                  Safe Activities
-                </h3>
-                <ul className="list-disc list-inside space-y-1 text-gray-700 mb-4">
-                  <li>Walking</li>
-                  <li>Swimming</li>
-                  <li>Stationary cycling</li>
-                  <li>Modified yoga/pilates</li>
-                  <li>Low-impact aerobics</li>
-                </ul>
-
-                <div className="bg-yellow-50 p-3 rounded-md">
-                  <h3 className="font-semibold text-yellow-800 mb-1">
-                    Warning Signs to Stop Exercise
-                  </h3>
-                  <ul className="list-disc list-inside space-y-1 text-gray-700">
-                    <li>Vaginal bleeding</li>
-                    <li>Dizziness or feeling faint</li>
-                    <li>Increased shortness of breath</li>
-                    <li>Chest pain</li>
-                    <li>Headache</li>
-                    <li>Muscle weakness</li>
-                    <li>Calf pain or swelling</li>
-                    <li>Regular painful contractions</li>
-                    <li>Leaking amniotic fluid</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-
-            <WomensHealthAssessment />
-
-            <div className="flex flex-col sm:flex-row justify-between mt-8 gap-3 sm:gap-0">
+            <div className="flex justify-between mt-8">
               <button
-                onClick={() => navigateToModule("bodychanges")}
+                onClick={navigateToPrevious}
                 className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md font-medium hover:bg-gray-300 transition-colors"
               >
-                Previous: Body Changes
+                Previous Module
               </button>
               <button
-                onClick={() => navigateToModule("complications")}
+                onClick={navigateToNext}
                 className="px-4 py-2 bg-indigo-600 text-white rounded-md font-medium hover:bg-indigo-700 transition-colors"
               >
-                Next: Complications
+                Next Module
               </button>
             </div>
           </div>
         )}
-        {/* Fetal Wellbeing Module */}
-        {/*{activeModule === "wellbeing" && (
-          <div className="bg-white rounded-lg shadow-md p-4 sm:p-5 md:p-6 mb-6">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b pb-4 mb-4">
-              <h2 className="text-xl sm:text-2xl font-bold text-indigo-700 mb-2 sm:mb-0">
-                Prenatal Care and Fetal Wellbeing
-              </h2>
-              <span className="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-sm font-medium">
-                Module 8 of 10
-              </span>
-            </div>
 
-            <div className="mb-6">
-              <p className="text-gray-700">
-                Monitoring fetal well-being is a critical component of prenatal
-                care. This module introduces various assessment techniques used
-                to evaluate fetal health and development throughout pregnancy.
-              </p>
-            </div>
-
-            <div className="bg-white border rounded-lg overflow-hidden mb-6">
-              <div className="bg-indigo-600 text-white px-4 py-2">
-                Components of Prenatal Care
-              </div>
-              <div className="p-4">
-                <h3 className="font-semibold text-indigo-700 mb-2">
-                  Initial Visit (6-10 weeks)
-                </h3>
-                <ul className="list-disc list-inside space-y-1 text-gray-700 mb-4">
-                  <li>
-                    Comprehensive medical, surgical, and obstetric history
-                  </li>
-                  <li>Family history and genetic screening</li>
-                  <li>Physical examination</li>
-                  <li>
-                    Laboratory tests (blood type, antibody screen, CBC, STI
-                    screening, urinalysis)
-                  </li>
-                  <li>Ultrasound for dating confirmation</li>
-                  <li>Establishing EDC (estimated date of confinement)</li>
-                  <li>GTPAL documentation</li>
-                </ul>
-
-                <h3 className="font-semibold text-indigo-700 mb-2">
-                  Follow-up Visits
-                </h3>
-                <ul className="list-disc list-inside space-y-1 text-gray-700 mb-4">
-                  <li>Monitoring maternal vital signs</li>
-                  <li>Weight tracking</li>
-                  <li>Fundal height measurement</li>
-                  <li>Fetal heart rate assessment</li>
-                  <li>Urine screening for protein and glucose</li>
-                  <li>Assessment of maternal concerns and symptoms</li>
-                </ul>
-
-                <h3 className="font-semibold text-indigo-700 mb-2">
-                  Visit Frequency
-                </h3>
-                <ul className="list-disc list-inside space-y-1 text-gray-700 mb-4">
-                  <li>Every 4 weeks until 28 weeks</li>
-                  <li>Every 2 weeks from 28-36 weeks</li>
-                  <li>Weekly after 36 weeks until delivery</li>
-                  <li>More frequent for high-risk pregnancies</li>
-                </ul>
-
-                <h3 className="font-semibold text-indigo-700 mb-2">
-                  Standard Prenatal Testing
-                </h3>
-                <ul className="list-disc list-inside space-y-1 text-gray-700">
-                  <li>First trimester screening (11-14 weeks)</li>
-                  <li>Second trimester screening (15-22 weeks)</li>
-                  <li>Anatomy ultrasound (18-22 weeks)</li>
-                  <li>Glucose challenge test (24-28 weeks)</li>
-                  <li>Group B streptococcus screening (35-37 weeks)</li>
-                </ul>
-              </div>
-            </div>
-
-            <FetalWellbeingAssessment />
-
-            <div className="flex flex-col sm:flex-row justify-between mt-8 gap-3 sm:gap-0">
-              <button
-                onClick={() => navigateToModule("nutrition")}
-                className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md font-medium hover:bg-gray-300 transition-colors"
-              >
-                Previous: Nutrition
-              </button>
-              <button
-                onClick={() => navigateToModule("complications")}
-                className="px-4 py-2 bg-indigo-600 text-white rounded-md font-medium hover:bg-indigo-700 transition-colors"
-              >
-                Next: Complications
-              </button>
-            </div>
-          </div>
-        )}*/}
         {/* Complications Module */}
         {activeModule === "complications" && (
           <div className="bg-white rounded-lg shadow-md p-4 sm:p-5 md:p-6 mb-6">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b pb-4 mb-4">
               <h2 className="text-xl sm:text-2xl font-bold text-indigo-700 mb-2 sm:mb-0">
-                Complications of Pregnancy
+                Pregnancy Complications
               </h2>
               <span className="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-sm font-medium">
-                Module 9 of 10
+                Module 8 of {modules.length}
               </span>
             </div>
 
@@ -934,22 +678,23 @@ function App() {
 
             <TeratogenExplorer />
 
-            <div className="flex flex-col sm:flex-row justify-between mt-8 gap-3 sm:gap-0">
+            <div className="flex justify-between mt-8">
               <button
-                onClick={() => navigateToModule("wellbeing")}
+                onClick={navigateToPrevious}
                 className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md font-medium hover:bg-gray-300 transition-colors"
               >
-                Previous: Fetal Wellbeing
+                Previous Module
               </button>
               <button
-                onClick={() => navigateToModule("labor")}
+                onClick={navigateToNext}
                 className="px-4 py-2 bg-indigo-600 text-white rounded-md font-medium hover:bg-indigo-700 transition-colors"
               >
-                Next: Labor & Birth
+                Next Module
               </button>
             </div>
           </div>
         )}
+
         {/* Labor & Birth Module */}
         {activeModule === "labor" && (
           <div className="bg-white rounded-lg shadow-md p-4 sm:p-5 md:p-6 mb-6">
@@ -958,7 +703,7 @@ function App() {
                 Labor & Birth Simulation
               </h2>
               <span className="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-sm font-medium">
-                Module 10 of 10
+                Module 9 of {modules.length}
               </span>
             </div>
 
@@ -1024,12 +769,12 @@ function App() {
 
             <LaborSimulation />
 
-            <div className="flex flex-col sm:flex-row justify-between mt-8 gap-3 sm:gap-0">
+            <div className="flex justify-between mt-8">
               <button
-                onClick={() => navigateToModule("complications")}
+                onClick={navigateToPrevious}
                 className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md font-medium hover:bg-gray-300 transition-colors"
               >
-                Previous: Complications
+                Previous Module
               </button>
               <button
                 onClick={() => navigateToModule("intro")}
