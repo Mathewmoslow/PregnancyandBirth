@@ -14,6 +14,8 @@ const FinalExam = ({ onComplete }) => {
     batchesCompleted: 0 // Track how many batches completed
   });
 
+  // Add current question index state
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [currentQuestions, setCurrentQuestions] = useState([]);
   const [incorrectQuestions, setIncorrectQuestions] = useState([]);
 
@@ -93,6 +95,8 @@ const FinalExam = ({ onComplete }) => {
       const startIndex = (examState.currentBatch - 1) * 50;
       const endIndex = startIndex + 50;
       setCurrentQuestions(examState.shuffledQuestions.slice(startIndex, endIndex));
+      // Reset to first question when batch changes
+      setCurrentQuestionIndex(0);
     }
   }, [examState.shuffledQuestions, examState.currentBatch]);
 
@@ -182,6 +186,7 @@ const FinalExam = ({ onComplete }) => {
       batchesCompleted: 0
     });
     setIncorrectQuestions([]);
+    setCurrentQuestionIndex(0);
   };
 
   const toggleReviewMode = () => {
@@ -189,6 +194,25 @@ const FinalExam = ({ onComplete }) => {
       ...prevState,
       reviewMode: !prevState.reviewMode
     }));
+  };
+
+  // New navigation functions
+  const nextQuestion = () => {
+    if (currentQuestionIndex < currentQuestions.length - 1) {
+      setCurrentQuestionIndex(prevIndex => prevIndex + 1);
+    }
+  };
+
+  const previousQuestion = () => {
+    if (currentQuestionIndex > 0) {
+      setCurrentQuestionIndex(prevIndex => prevIndex - 1);
+    }
+  };
+
+  // Calculate progress percentage for the progress bar
+  const calculateProgress = () => {
+    const answeredCount = Object.keys(examState.userAnswers).length;
+    return (answeredCount / currentQuestions.length) * 100;
   };
 
   if (!examState.started) {
@@ -203,7 +227,7 @@ const FinalExam = ({ onComplete }) => {
             <li>You will have 2 hours (120 minutes) to complete each set of 50 questions.</li>
             <li>Questions cover a wide range of obstetric and gynecologic topics.</li>
             <li>Each question has one best answer among the four options provided.</li>
-            <li>You can review and change your answers before submitting each section.</li>
+            <li>You can navigate between questions using the previous and next buttons.</li>
             <li>After submission, you will receive immediate feedback on your performance.</li>
             <li>The exam will analyze your incorrect answers to help you identify areas for improvement.</li>
           </ul>
@@ -366,6 +390,9 @@ const FinalExam = ({ onComplete }) => {
     );
   }
 
+  // Display the current question only (instead of all questions)
+  const currentQuestion = currentQuestions[currentQuestionIndex];
+
   return (
     <div className="bg-white rounded-lg p-6 max-w-6xl mx-auto">
       <div className="flex justify-between items-center mb-6">
@@ -377,58 +404,86 @@ const FinalExam = ({ onComplete }) => {
         </div>
       </div>
       
+      {/* Overall Progress Bar */}
       <div className="mb-4">
         <div className="w-full bg-gray-200 rounded-full h-2">
           <div
             className="h-2 rounded-full bg-gradient-to-r from-indigo-500 to-purple-600 transition-all"
-            style={{ width: `${Object.keys(examState.userAnswers).length * 2}%` }}
+            style={{ width: `${calculateProgress()}%` }}
           ></div>
         </div>
         <div className="flex justify-between text-sm text-gray-600 mt-1">
           <span>Progress: {Object.keys(examState.userAnswers).length}/50 questions answered</span>
-          <span>{Math.round((Object.keys(examState.userAnswers).length / 50) * 100)}% complete</span>
+          <span>Question {currentQuestionIndex + 1} of {currentQuestions.length}</span>
         </div>
       </div>
       
-      <div className="space-y-8 mb-8">
-        {currentQuestions.map((question, index) => (
-          <div key={question.id} className="border rounded-lg p-4 bg-gray-50">
-            <div className="flex justify-between">
-              <h3 className="font-bold text-gray-800 mb-2">Question {index + 1}</h3>
-              <span className="text-sm text-gray-500">ID: {question.id}</span>
-            </div>
-            <p className="mb-4">{question.question}</p>
-            
-            <div className="grid grid-cols-1 gap-2">
-              {question.options.map((option, optionIndex) => (
-                <div
-                  key={optionIndex}
-                  onClick={() => handleAnswerChange(question.id, optionIndex)}
-                  className={`p-3 rounded-lg cursor-pointer transition-colors ${
-                    examState.userAnswers[question.id] === optionIndex
-                      ? "bg-indigo-100 border-2 border-indigo-500 text-indigo-800"
-                      : "bg-white border border-gray-300 text-gray-800 hover:bg-gray-100"
-                  }`}
-                >
-                  <div className="flex items-center">
-                    <div className={`h-5 w-5 mr-3 rounded-full flex items-center justify-center border ${
-                      examState.userAnswers[question.id] === optionIndex
-                        ? "bg-indigo-500 border-indigo-500"
-                        : "border-gray-400"
-                    }`}>
-                      {examState.userAnswers[question.id] === optionIndex && (
-                        <div className="h-2 w-2 rounded-full bg-white"></div>
-                      )}
-                    </div>
-                    {option}
-                  </div>
-                </div>
-              ))}
-            </div>
+      {/* Current Question Display */}
+      {currentQuestion && (
+        <div className="border rounded-lg p-4 bg-gray-50 mb-6">
+          <div className="flex justify-between">
+            <h3 className="font-bold text-gray-800 mb-2">Question {currentQuestionIndex + 1}</h3>
+            <span className="text-sm text-gray-500">ID: {currentQuestion.id}</span>
           </div>
-        ))}
-      </div>
+          <p className="mb-4">{currentQuestion.question}</p>
+          
+          <div className="grid grid-cols-1 gap-2 mb-4">
+            {currentQuestion.options.map((option, optionIndex) => (
+              <div
+                key={optionIndex}
+                onClick={() => handleAnswerChange(currentQuestion.id, optionIndex)}
+                className={`p-3 rounded-lg cursor-pointer transition-colors ${
+                  examState.userAnswers[currentQuestion.id] === optionIndex
+                    ? "bg-indigo-100 border-2 border-indigo-500 text-indigo-800"
+                    : "bg-white border border-gray-300 text-gray-800 hover:bg-gray-100"
+                }`}
+              >
+                <div className="flex items-center">
+                  <div className={`h-5 w-5 mr-3 rounded-full flex items-center justify-center border ${
+                    examState.userAnswers[currentQuestion.id] === optionIndex
+                      ? "bg-indigo-500 border-indigo-500"
+                      : "border-gray-400"
+                  }`}>
+                    {examState.userAnswers[currentQuestion.id] === optionIndex && (
+                      <div className="h-2 w-2 rounded-full bg-white"></div>
+                    )}
+                  </div>
+                  {option}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Question Navigation Controls */}
+          <div className="flex justify-between mt-6">
+            <button
+              onClick={previousQuestion}
+              disabled={currentQuestionIndex === 0}
+              className={`px-4 py-2 rounded-lg font-medium transition-all ${
+                currentQuestionIndex === 0
+                  ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+                  : "bg-indigo-100 text-indigo-700 hover:bg-indigo-200"
+              }`}
+            >
+              Previous Question
+            </button>
+            
+            <button
+              onClick={nextQuestion}
+              disabled={currentQuestionIndex === currentQuestions.length - 1}
+              className={`px-4 py-2 rounded-lg font-medium transition-all ${
+                currentQuestionIndex === currentQuestions.length - 1
+                  ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+                  : "bg-indigo-100 text-indigo-700 hover:bg-indigo-200"
+              }`}
+            >
+              Next Question
+            </button>
+          </div>
+        </div>
+      )}
       
+      {/* Exam Footer Controls */}
       <div className="flex justify-between items-center">
         <button
           onClick={restartExam}
@@ -440,15 +495,37 @@ const FinalExam = ({ onComplete }) => {
         <button
           onClick={submitExam}
           className={`px-6 py-3 rounded-lg font-medium transition-all ${
-            Object.keys(examState.userAnswers).length === 50
+            Object.keys(examState.userAnswers).length === currentQuestions.length
               ? "bg-green-600 text-white hover:bg-green-700"
               : "bg-indigo-600 text-white hover:bg-indigo-700"
           }`}
         >
-          {Object.keys(examState.userAnswers).length === 50
+          {Object.keys(examState.userAnswers).length === currentQuestions.length
             ? "Submit All Answers"
-            : `Submit (${Object.keys(examState.userAnswers).length}/50 Answered)`}
+            : `Submit (${Object.keys(examState.userAnswers).length}/${currentQuestions.length} Answered)`}
         </button>
+      </div>
+
+      {/* Question Grid Navigation */}
+      <div className="mt-8 border-t pt-4">
+        <h3 className="text-lg font-medium text-indigo-700 mb-3">Question Navigator</h3>
+        <div className="grid grid-cols-10 gap-2">
+          {currentQuestions.map((question, index) => (
+            <button
+              key={question.id}
+              onClick={() => setCurrentQuestionIndex(index)}
+              className={`w-10 h-10 rounded-lg flex items-center justify-center font-medium 
+                ${currentQuestionIndex === index 
+                  ? "bg-indigo-600 text-white" 
+                  : examState.userAnswers[question.id] !== undefined
+                    ? "bg-indigo-100 text-indigo-700"
+                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                }`}
+            >
+              {index + 1}
+            </button>
+          ))}
+        </div>
       </div>
     </div>
   );
